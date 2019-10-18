@@ -43,7 +43,6 @@ void SysTick_Handler(void) {
     
         led_clear();
         led_disp_num(count);
-        count = (count + 1) % 16;
     
         printable_count = (unsigned int)count;
         binary_count = itob((long int)count, 4);
@@ -51,13 +50,14 @@ void SysTick_Handler(void) {
                                                printable_count,
                                                binary_count);
         write_usb_serial_blocking(count_string, COUNT_STRING_LEN);
-        
+
         if (count == 15) {
             SYSTICK_IntCmd(DISABLE);
             SYSTICK_Cmd(DISABLE);
             write_usb_serial_blocking("Finished count\n\r", 16);
         }
 
+        count = (count + 1) % 16;
     }
 }
 
