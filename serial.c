@@ -15,7 +15,7 @@ void main(void)
 */
 
 // Read options
-int read_usb_serial_none_blocking(char *buf,int length)
+int read_usb_serial_non_blocking(char *buf,int length)
 {
 	return(UART_Receive((LPC_UART_TypeDef *)LPC_UART0, (uint8_t *)buf, length, NONE_BLOCKING));
 }
