@@ -45,20 +45,31 @@ LDFLAGS=$(CMSISFL) -static -mcpu=cortex-m3 -mthumb -mthumb-interwork \
 
 LDFLAGS+=-L$(CMSIS)/lib -lDriversLPC17xxgnu
 
+BINFOLDER=bin
+
 # Name of the binary being built
-EXECNAME	= bin/leds
+MP1_EXECNAME = mp1_demo
+LEDS_EXECNAME = leds_demo
+
+EXECNAME = $(MP1_EXECNAME)
 
 # Source files provided by the user to build the project
-OBJ		= mp1_demo.o leds.o serial.o
+MP1_OBJ = mp1_demo.o leds.o serial.o
+LEDS_OBJ = leds_demo.o leds.o
 
 # Commands handled by this makefile
-all: 	serial
+all: 	mp1
 	@echo "Build finished"
 
-serial: $(OBJ)
+mp1: $(MP1_OBJ)
 	mkdir -p bin # prevent error "No such file or directory" during linking
-	$(CC) -o $(EXECNAME) $(OBJ) $(LDFLAGS)
-	$(OBJCOPY) -I elf32-little -O binary $(EXECNAME) $(EXECNAME).bin
+	$(CC) -o $(BINFOLDER)/$(MP1_EXECNAME) $(MP1_OBJ) $(LDFLAGS)
+	$(OBJCOPY) -I elf32-little -O binary $(BINFOLDER)/$(MP1_EXECNAME) $(BINFOLDER)/$(MP1_EXECNAME).bin
+
+leds: $(LEDS_OBJ)
+	mkdir -p bin # prevent error "No such file or directory" during linking
+	$(CC) -o $(BINFOLDER)/$(LEDS_EXECNAME) $(LEDS_OBJ) $(LDFLAGS)
+	$(OBJCOPY) -I elf32-little -O binary $(BINFOLDER)/$(LEDS_EXECNAME) $(BINFOLDER)/$(LEDS_EXECNAME).bin
 
 # make clean - Clean out the source tree ready to re-build the project
 clean:
@@ -74,7 +85,7 @@ clean:
 USER:=$(shell whoami)
 
 install:
-	@echo "Copying " $(EXECNAME) "to the MBED file system"
-	cp $(EXECNAME).bin /media/$(USER)/MBED &
+	@echo "Copying " $(BINFOLDER)/$(EXECNAME) "to the MBED file system"
+	cp $(BINFOLDER)/$(EXECNAME).bin /media/$(USER)/MBED &
 	sync
 	@echo "Now press the reset button on all MBED file systems"
