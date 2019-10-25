@@ -50,15 +50,19 @@ BINFOLDER=bin
 # Name of the binary being built
 MP1_EXECNAME = mp1_demo
 LEDS_EXECNAME = leds_demo
+I2C_SCAN_EXECNAME = i2c_scanner
+LCD_TEST_EXECNAME = lcd_test
 
-EXECNAME = $(MP1_EXECNAME)
+EXECNAME = $(LCD_TEST_EXECNAME)
 
 # Source files provided by the user to build the project
 MP1_OBJ = mp1_demo.o leds.o serial.o
 LEDS_OBJ = leds_demo.o leds.o
+I2C_SCAN_OBJ = i2c_scanner.o serial.o ioboard_i2c.o
+LCD_TEST_OBJ = lcd_test.o ioboard_i2c.o serial.o
 
 # Commands handled by this makefile
-all: 	mp1
+all: 	mp1 leds i2c_scanner
 	@echo "Build finished"
 
 mp1: $(MP1_OBJ)
@@ -70,6 +74,16 @@ leds: $(LEDS_OBJ)
 	mkdir -p bin # prevent error "No such file or directory" during linking
 	$(CC) -o $(BINFOLDER)/$(LEDS_EXECNAME) $(LEDS_OBJ) $(LDFLAGS)
 	$(OBJCOPY) -I elf32-little -O binary $(BINFOLDER)/$(LEDS_EXECNAME) $(BINFOLDER)/$(LEDS_EXECNAME).bin
+	
+i2c_scanner: $(I2C_SCAN_OBJ)
+	mkdir -p bin # prevent error "No such file or directory" during linking
+	$(CC) -o $(BINFOLDER)/$(I2C_SCAN_EXECNAME) $(I2C_SCAN_OBJ) $(LDFLAGS)
+	$(OBJCOPY) -I elf32-little -O binary $(BINFOLDER)/$(I2C_SCAN_EXECNAME) $(BINFOLDER)/$(I2C_SCAN_EXECNAME).bin
+
+lcd_test: $(LCD_TEST_OBJ)
+	mkdir -p bin # prevent error "No such file or directory" during linking
+	$(CC) -o $(BINFOLDER)/$(LCD_TEST_EXECNAME) $(LCD_TEST_OBJ) $(LDFLAGS)
+	$(OBJCOPY) -I elf32-little -O binary $(BINFOLDER)/$(LCD_TEST_EXECNAME) $(BINFOLDER)/$(LCD_TEST_EXECNAME).bin
 
 # make clean - Clean out the source tree ready to re-build the project
 clean:
