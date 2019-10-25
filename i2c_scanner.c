@@ -27,7 +27,6 @@ int main(void) {
         .rx_length = 0,
         .tx_data = &data,
         .tx_length = 1,
-        .retransmissions_max = 1
     };
 
     for (i = 0; i < 128; i++) {
