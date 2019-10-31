@@ -21,7 +21,7 @@ void ioboard_lcd_init(void) {
         Disp_conf(0, 0),          // left to right, top to bottom
         Temp_ctl(0, 0),           // temperature coefficient
         HV_gen(1, 0),             // voltage multiplier
-        VLCD_set(0, 0x3f),        // LCD supply voltage
+        VLCD_set(0, 0x1f),        // LCD supply voltage
         Function_set(1, 1, 0, 0), // set basic instruction set again
         Return_home               // Set DDRAM addr to 0 and reset a shifted display
     };
@@ -161,6 +161,6 @@ void ioboard_lcd_write_ascii(char *string, uint8_t ddram_addr) {
     I2C_MasterTransferData(LPC_I2C1, &packet, I2C_TRANSFER_POLLING);
 
     packet.tx_data = data;
-    packet.tx_length = n;
+    packet.tx_length = n+1;
     I2C_MasterTransferData(LPC_I2C1, &packet, I2C_TRANSFER_POLLING);
 }

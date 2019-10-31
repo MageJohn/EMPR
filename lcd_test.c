@@ -7,13 +7,6 @@
 
 
 int main(void) {
-    I2C_M_SETUP_Type lcd_write;
-    uint8_t instructions[] = {
-        Control_byte(0, 0),
-        Set_DDRAM(0x00)
-        };
-    uint8_t string[] = (uint8_t)"hello\X91world"
-
     serial_init();
     write_usb_serial_blocking("start\n\r", 7);
 
@@ -23,8 +16,8 @@ int main(void) {
 
     ioboard_lcd_clear_display();
 
-    ioboard_lcd_send_bytes(instructions, LEN(instructions));
-    ioboard_lcd_send_bytes(string, LEN(string));
+    ioboard_lcd_write_ascii("hello", 0x00);
+    ioboard_lcd_write_ascii("world", 0x40);
 
     return 0;
 }

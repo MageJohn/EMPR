@@ -52,6 +52,7 @@ void SysTick_Handler(void) {
         write_usb_serial_blocking(count_string, COUNT_STRING_LEN);
 
         if (count == 15) {
+            led_clear();
             SYSTICK_IntCmd(DISABLE);
             SYSTICK_Cmd(DISABLE);
             write_usb_serial_blocking("Finished count\n\r", 16);

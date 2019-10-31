@@ -25,6 +25,8 @@ void ioboard_lcd_send_bytes(uint8_t *data, uint32_t length);
 // uint8_t *data: Pointer to the data to transmit
 // uint32_t length: Length of the data to transmit
 
+void ioboard_lcd_write_ascii(char *string, uint8_t ddram_addr);
+
 /*------------------------------
  * INSTRUCTION MACROS
  *------------------------------*/
