@@ -11,6 +11,8 @@
 uint8_t scancode8b_to_4b(uint8_t scancode8b);
 uint8_t onehot4b_to_binary2b(uint8_t onehot4b);
 
+uint8_t key_repeat[16] = {[0 ... 15] = 0};
+
 
 uint8_t scancode8b_to_4b(uint8_t scancode8b) {
     uint8_t upper_nibble = onehot4b_to_binary2b((scancode8b >> 4));
@@ -50,28 +52,27 @@ bool ioboard_keypad_get_key(uint8_t *pressed) {
         .tx_data = &tx,
         .tx_length = 1
     };
-    uint8_t scancode8b;
-    uint8_t read_key;
-    static uint8_t key_repeat[16] = {[0 ... 15] = 0};
+    uint8_t read_scancode;
+    uint8_t key;
     uint8_t row;
-    uint8_t scancode;
+    uint8_t test_scancode;
     bool found_key = false;
 
     for (tx = ~0x10; tx != 0xff; tx = ~((~tx) << 1)) {
         I2C_MasterTransferData(LPC_I2C1, &packet, I2C_TRANSFER_POLLING);
-        scancode8b = ((~rx) & 0x0f) | (~tx);
-        read_key = scancode8b_to_4b(scancode8b);
+        read_scancode = ((~rx) & 0x0f) | (~tx);
 
         for (row=0x01; row <= 0x08; row <<= 1) {
-            scancode = scancode8b_to_4b(~tx | row);
-            if (read_key == scancode) {
-                key_repeat[scancode] -= 1;
-                if (key_repeat[scancode] == 0xff) {
-                    *pressed = scancode;
+            test_scancode = ~tx | row;
+            key = scancode8b_to_4b(test_scancode);
+            if ((read_scancode & test_scancode) == test_scancode) {
+                key_repeat[key] -= 1;
+                if (key_repeat[key] == 0xff) {
+                    *pressed = key;
                     found_key = true;
                 }
             } else {
-                key_repeat[scancode] = 0;
+                key_repeat[key] = 0;
             }
         }
     }
