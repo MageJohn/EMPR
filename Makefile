@@ -53,15 +53,17 @@ LEDS_EXECNAME = leds_demo
 I2C_SCAN_EXECNAME = i2c_scanner
 LCD_TEST_EXECNAME = lcd_test
 KP_TEST_EXECNAME = keypad_test
+CALCULATOR_EXECNAME = calculator
 
-EXECNAME = $(KP_TEST_EXECNAME)
+EXECNAME = $(CALCULATOR_EXECNAME)
 
 # Source files provided by the user to build the project
 MP1_OBJ = mp1_demo.o leds.o serial.o
 LEDS_OBJ = leds_demo.o leds.o
 I2C_SCAN_OBJ = i2c_scanner.o serial.o ioboard_i2c.o
 LCD_TEST_OBJ = lcd_test.o ioboard_i2c.o serial.o ioboard_lcd.o
-KP_TEST_OBJ = keypad_test.o ioboard_i2c.o serial.o ioboard_lcd.o
+KP_TEST_OBJ = keypad_test.o ioboard_i2c.o serial.o ioboard_lcd.o ioboard_keypad.o
+CALCULATOR_OBJ = calculator.o ioboard_i2c.o serial.o ioboard_lcd.o ioboard_keypad.o 
 
 # Commands handled by this makefile
 all: 	mp1 leds i2c_scanner
@@ -91,6 +93,11 @@ keypad_test: $(KP_TEST_OBJ)
 	mkdir -p bin # prevent error "No such file or directory" during linking
 	$(CC) -o $(BINFOLDER)/$(KP_TEST_EXECNAME) $(KP_TEST_OBJ) $(LDFLAGS)
 	$(OBJCOPY) -I elf32-little -O binary $(BINFOLDER)/$(KP_TEST_EXECNAME) $(BINFOLDER)/$(KP_TEST_EXECNAME).bin
+
+calculator: $(CALCULATOR_OBJ)
+	mkdir -p bin # prevent error "No such file or directory" during linking
+	$(CC) -o $(BINFOLDER)/$(CALCULATOR_EXECNAME) $(CALCULATOR_OBJ) $(LDFLAGS)
+	$(OBJCOPY) -I elf32-little -O binary $(BINFOLDER)/$(CALCULATOR_EXECNAME) $(BINFOLDER)/$(CALCULATOR_EXECNAME).bin
 
 # make clean - Clean out the source tree ready to re-build the project
 clean:
