@@ -65,6 +65,7 @@ int main(void){
                             state = 1;
                             break;
                         case_any_digit
+                            left_sign = 1;
                             left = scancode;
                             state = 2;
                             break;
@@ -106,6 +107,7 @@ int main(void){
                             state = 4;
                             break;
                         case_any_digit
+                            right_sign = 1;
                             right = scancode;
                             state = 5;
                             break;
