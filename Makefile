@@ -62,7 +62,7 @@ MP1_OBJ = mp1_demo.o leds.o serial.o
 LEDS_OBJ = leds_demo.o leds.o
 I2C_SCAN_OBJ = i2c_scanner.o serial.o ioboard_i2c.o
 LCD_TEST_OBJ = lcd_test.o ioboard_i2c.o serial.o ioboard_lcd.o
-KP_TEST_OBJ = keypad_test.o ioboard_i2c.o serial.o ioboard_lcd.o ioboard_keypad.o
+KP_TEST_OBJ = keypad_test.o ioboard_i2c.o ioboard_lcd.o ioboard_keypad.o
 CALCULATOR_OBJ = calculator.o ioboard_i2c.o serial.o ioboard_lcd.o ioboard_keypad.o 
 
 # Commands handled by this makefile

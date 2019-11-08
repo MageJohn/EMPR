@@ -3,7 +3,6 @@
 
 #include "lpc17xx_i2c.h"
 
-#include "serial.h"
 #include "ioboard_i2c.h"
 #include "ioboard_lcd.h"
 #include "ioboard_keypad.h"
@@ -19,18 +18,14 @@ uint8_t scancode_lut[16] = {
 int main(void){
     bool key_pressed;
     uint8_t scancode;
-    char out[6];
     uint8_t lcd_bytes[] = {Control_byte(0, 0), Set_DDRAM(0x00)};
 
-    serial_init();
     ioboard_i2c_init();
     ioboard_lcd_init();
     ioboard_lcd_clear_display();
     ioboard_lcd_send_bytes(lcd_bytes, 2);
 
     lcd_bytes[0] = Control_byte(0, 1);
-
-    write_usb_serial_blocking("start\n\r", 7);
 
     while (1) {
         key_pressed = ioboard_keypad_get_key(&scancode);
