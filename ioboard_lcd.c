@@ -97,6 +97,10 @@ void ioboard_lcd_write_bytes(uint8_t *bytes, uint8_t length, uint8_t ddram_addr)
     // uint8_t *bytes: Pointer to the byte array to write
     // uint8_t length: Length of the byte array to write
     // uint8_t ddram_addr: DDRAM address to write the bytes to
+    I2C_M_SETUP_Type packet = {
+        .sl_addr7bit = LCD_ADDR,
+        .rx_data = NULL
+    };
 
     uint8_t instructions[] = {
         Control_byte(0,0),
@@ -107,7 +111,16 @@ void ioboard_lcd_write_bytes(uint8_t *bytes, uint8_t length, uint8_t ddram_addr)
     };
 
     memcpy((void*)data+1, (void*)bytes, (DDRAM_SIZE < length)?DDRAM_SIZE:length);
-    // Note that the DDRAM address wraps to the beginning 
+    // Note that the DDRAM address wraps to the beginning of the line if it
+    // increments past the end
+
+    packet.tx_data = instructions;
+    packet.tx_length = LEN(instructions);
+    I2C_MasterTransferData(LPC_I2C1, &packet, I2C_TRANSFER_POLLING);
+
+    packet.tx_data = data;
+    packet.tx_length = DDRAM_SIZE+1;
+    I2C_MasterTransferData(LPC_I2C1, &packet, I2C_TRANSFER_POLLING);
 }
 
 void ioboard_lcd_write_ascii(char *string, uint8_t ddram_addr) {
