@@ -2,6 +2,13 @@
 #include "lpc17xx_pinsel.h"
 #include "ioboard_i2c.h"
 
+// Initialise the i2c bus to which the ioboard peripherals attached
+//
+// Returns:
+//      void
+//
+// Parameters:
+//      void
 void ioboard_i2c_init(void) {
     PINSEL_CFG_Type i2c1_select;
 
