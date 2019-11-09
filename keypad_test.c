@@ -28,7 +28,7 @@ int main(void){
     lcd_bytes[0] = Control_byte(0, 1);
 
     while (1) {
-        key_pressed = ioboard_keypad_get_key(&scancode);
+        key_pressed = ioboard_keypad_rl_get_key(&scancode);
         if (key_pressed) {
             lcd_bytes[1] = scancode_lut[scancode];
             ioboard_lcd_send_bytes(lcd_bytes, 2);
