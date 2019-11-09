@@ -9,9 +9,12 @@
 // All functions assume that the IO board's I2C interface has been initialised
 // with the function ioboard_i2c_init()
 
-void ioboard_lcd_init(void) {
-    // Initialise the LCD display, ready for writing to
 
+// Initialise the LCD display, ready for writing to
+//
+// Parameters:
+//      void
+void ioboard_lcd_init(void) {
     uint8_t init_data[] = {
         Control_byte(0, 0), 
         Function_set(1, 1, 0, 0), // set basic instruction set
@@ -36,51 +39,54 @@ void ioboard_lcd_init(void) {
     I2C_MasterTransferData(LPC_I2C1, &lcd_write, I2C_TRANSFER_POLLING);
 }
 
-void ioboard_lcd_clear_display(void) {
-    // Clears the display
-    //
-    // Useful for the R character set, whose Clear_display function is broken
-    // There is no need to wait for 165 clock cycles
 
-    static I2C_M_SETUP_Type clear_packet = {
+// Clears the display
+//
+// Useful for the R character set, whose Clear_display function is broken
+// There is no need to wait for 165 clock cycles
+//
+// Parameters:
+//      void
+void ioboard_lcd_clear_display(void) {
+
+    I2C_M_SETUP_Type clear_packet = {
         .sl_addr7bit = LCD_ADDR,
         .rx_data = NULL,
     };
 
-    static uint8_t instructions1[] = {
+    uint8_t instructions[] = {
         Control_byte(0, 0),
         Display_ctl(0, 0, 0),
         Set_DDRAM(0x00)
     };
-    static uint8_t data[] = {
+    uint8_t data[] = {
         Control_byte(0, 1),
         [1 ... 80] = 0x91 // 0x91 is a blank character
     };
-    static uint8_t instructions2[] = {
-        Control_byte(0, 0),
-        Display_ctl(1, 0, 0),
-        Return_home
-    };
 
-    clear_packet.tx_data = instructions1;
-    clear_packet.tx_length = LEN(instructions1);
+    clear_packet.tx_data = instructions;
+    clear_packet.tx_length = LEN(instructions);
     I2C_MasterTransferData(LPC_I2C1, &clear_packet, I2C_TRANSFER_POLLING);
 
     clear_packet.tx_data = data;
     clear_packet.tx_length = LEN(data);
     I2C_MasterTransferData(LPC_I2C1, &clear_packet, I2C_TRANSFER_POLLING);
 
-    clear_packet.tx_data = instructions2;
-    clear_packet.tx_length = LEN(instructions2);
+    instructions[1] = Display_ctl(1, 0, 0);
+    instructions[2] = Return_home;
+    clear_packet.tx_data = instructions;
+    clear_packet.tx_length = LEN(instructions);
     I2C_MasterTransferData(LPC_I2C1, &clear_packet, I2C_TRANSFER_POLLING);
 }
 
+
+// Transmit the data to the LCD display
+// 
+// Parameters: 
+//      uint8_t *data: Pointer to the data to transmit
+//      uint32_t length: Length of the data to transmit
 void ioboard_lcd_send_bytes(uint8_t *data, uint32_t length) {
-    // Transmit the data to the LCD display
-    // 
-    // uint8_t *data: Pointer to the data to transmit
-    // uint32_t length: Length of the data to transmit
-    static I2C_M_SETUP_Type packet = {
+    I2C_M_SETUP_Type packet = {
         .sl_addr7bit = LCD_ADDR,
         .rx_data = NULL,
     };
@@ -91,12 +97,14 @@ void ioboard_lcd_send_bytes(uint8_t *data, uint32_t length) {
     I2C_MasterTransferData(LPC_I2C1, &packet, I2C_TRANSFER_POLLING);
 }
 
+
+// Write arbitrary bytes to the DDRAM
+//
+// Parameters:
+//      uint8_t *bytes: Pointer to the byte array to write
+//      uint8_t length: Length of the byte array to write
+//      uint8_t ddram_addr: DDRAM address to write the bytes to
 void ioboard_lcd_write_bytes(uint8_t *bytes, uint8_t length, uint8_t ddram_addr) {
-    // Write the bytes to the DDRAM
-    //
-    // uint8_t *bytes: Pointer to the byte array to write
-    // uint8_t length: Length of the byte array to write
-    // uint8_t ddram_addr: DDRAM address to write the bytes to
     I2C_M_SETUP_Type packet = {
         .sl_addr7bit = LCD_ADDR,
         .rx_data = NULL
@@ -123,17 +131,23 @@ void ioboard_lcd_write_bytes(uint8_t *bytes, uint8_t length, uint8_t ddram_addr)
     I2C_MasterTransferData(LPC_I2C1, &packet, I2C_TRANSFER_POLLING);
 }
 
-void ioboard_lcd_write_ascii(char *string, uint8_t ddram_addr) {
-    // Takes a null terminated ascii string and a ddram address, and translates
-    // it as closely as possible into the character set of the display driver.
-    // Not all ascii characters are supported, and there is no support for the
-    // special characters supported by the driver. Unsupported characters will
-    // be replaced with an upside down ?. The advantage is that an ascii string
-    // literal can be passed. The maximum length of the string is the size of
-    // the DDRAM, 80 characters, and a longer string will be truncated.
 
+// Write an ascii string to the display
+//
+// Takes a null terminated ascii string and translates it as closely as
+// possible into the character set of the display driver.  Not all ascii
+// characters are supported, and there is no support for the special characters
+// supported by the driver. Unsupported characters will be replaced with an
+// upside down ?. The advantage is that an ascii string literal can be passed.
+// The maximum length of the string is the size of the DDRAM, 80 characters,
+// and a longer string will be truncated.
+//
+// Parameters:
+//      char *string: pointer to the null terminated string to write
+//      uint8_t ddram_addr: ddram address to start writing from
+void ioboard_lcd_write_ascii(char *string, uint8_t ddram_addr) {
     // 0xe0 is the upside down ?
-    static const uint8_t ASCII_TO_CHARSET[128] = { [0 ... 127] = 0xe0,
+    static const uint8_t ascii_to_charset[128] = { [0 ... 127] = 0xe0,
         [' '] = 0x91, ['!'] = 0xa1, ['"'] = 0xa2, ['#'] = 0xa3, ['$'] = 0x82,
         ['%'] = 0xa5, ['&'] = 0xa6, ['\''] = 0xa7, ['('] = 0xa8, [')'] = 0xa9,
         ['*'] = 0xaa, ['+'] = 0xab, [','] = 0xac, ['-'] = 0xad, ['.'] = 0xae,
@@ -153,7 +167,7 @@ void ioboard_lcd_write_ascii(char *string, uint8_t ddram_addr) {
         ['s'] = 0xf3, ['t'] = 0xf4, ['u'] = 0xf5, ['v'] = 0xf6, ['w'] = 0xf7,
         ['x'] = 0xf8, ['y'] = 0xf9, ['z'] = 0xfa
     };
-    static I2C_M_SETUP_Type packet = {
+    I2C_M_SETUP_Type packet = {
         .sl_addr7bit = LCD_ADDR,
         .rx_data = NULL
     };
@@ -162,10 +176,10 @@ void ioboard_lcd_write_ascii(char *string, uint8_t ddram_addr) {
         Set_DDRAM(ddram_addr)
     };
     uint8_t data[DDRAM_SIZE+1] = {Control_byte(0,1)};
-    uint32_t n=0;
+    uint8_t n=0;
 
     while (n < DDRAM_SIZE && string[n] != '\0') {
-        data[n+1] = ASCII_TO_CHARSET[string[n] < 128 ? string[n] : 0];
+        data[n+1] = ascii_to_charset[string[n] < 128 ? string[n] : 0];
         n++;
     }
 

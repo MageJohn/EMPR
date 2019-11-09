@@ -9,22 +9,53 @@
  * FUNCTIONS
  *------------------------------*/
 
-void ioboard_lcd_init(void);
 // Initialise the LCD display, ready for writing to
+//
+// Parameters:
+//      void
+void ioboard_lcd_init(void);
 
 
-void ioboard_lcd_clear_display(void);
 // Clears the display
 //
 // Useful for the R character set, whose Clear_display function is broken
 // There is no need to wait for 165 clock cycles
+//
+// Parameters:
+//      void
+void ioboard_lcd_clear_display(void);
 
-void ioboard_lcd_send_bytes(uint8_t *data, uint32_t length);
+
 // Transmit the data to the LCD display
 // 
-// uint8_t *data: Pointer to the data to transmit
-// uint32_t length: Length of the data to transmit
+// Parameters: 
+//      uint8_t *data: Pointer to the data to transmit
+//      uint32_t length: Length of the data to transmit
+void ioboard_lcd_send_bytes(uint8_t *data, uint32_t length);
 
+
+// Write arbitrary bytes to the DDRAM
+//
+// Parameters:
+//      uint8_t *bytes: Pointer to the byte array to write
+//      uint8_t length: Length of the byte array to write
+//      uint8_t ddram_addr: DDRAM address to write the bytes to
+void ioboard_lcd_write_bytes(uint8_t *bytes, uint8_t length, uint8_t ddram_addr);
+
+
+// Write an ascii string to the display
+//
+// Takes a null terminated ascii string and translates it as closely as
+// possible into the character set of the display driver.  Not all ascii
+// characters are supported, and there is no support for the special characters
+// supported by the driver. Unsupported characters will be replaced with an
+// upside down ?. The advantage is that an ascii string literal can be passed.
+// The maximum length of the string is the size of the DDRAM, 80 characters,
+// and a longer string will be truncated.
+//
+// Parameters:
+//      char *string: pointer to the null terminated string to write
+//      uint8_t ddram_addr: ddram address to start writing from
 void ioboard_lcd_write_ascii(char *string, uint8_t ddram_addr);
 
 /*------------------------------
