@@ -12,6 +12,9 @@
 
 // Initialise the LCD display, ready for writing to
 //
+// Returns: 
+//      void
+//
 // Parameters:
 //      void
 void ioboard_lcd_init(void) {
@@ -44,6 +47,9 @@ void ioboard_lcd_init(void) {
 //
 // Useful for the R character set, whose Clear_display function is broken
 // There is no need to wait for 165 clock cycles
+//
+// Returns: 
+//      void
 //
 // Parameters:
 //      void
@@ -82,6 +88,9 @@ void ioboard_lcd_clear_display(void) {
 
 // Transmit the data to the LCD display
 // 
+// Returns: 
+//      void
+//
 // Parameters: 
 //      uint8_t *data: Pointer to the data to transmit
 //      uint32_t length: Length of the data to transmit
@@ -99,6 +108,9 @@ void ioboard_lcd_send_bytes(uint8_t *data, uint32_t length) {
 
 
 // Write arbitrary bytes to the DDRAM
+//
+// Returns: 
+//      void
 //
 // Parameters:
 //      uint8_t *bytes: Pointer to the byte array to write
@@ -141,6 +153,9 @@ void ioboard_lcd_write_bytes(uint8_t *bytes, uint8_t length, uint8_t ddram_addr)
 // upside down ?. The advantage is that an ascii string literal can be passed.
 // The maximum length of the string is the size of the DDRAM, 80 characters,
 // and a longer string will be truncated.
+//
+// Returns: 
+//      void
 //
 // Parameters:
 //      char *string: pointer to the null terminated string to write
