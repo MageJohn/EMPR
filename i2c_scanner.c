@@ -5,7 +5,13 @@
 
 #define ADDR_OUT_LEN 7
 
+#ifndef MP2
 int main(void) {
+    return i2c_scan();
+}
+#endif
+
+int i2c_scan(void) {
     I2C_M_SETUP_Type scanning_packet;
     char output[34];
     uint8_t data;

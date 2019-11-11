@@ -12,6 +12,9 @@ uint8_t scancode8b_to_4b(uint8_t scancode8b);
 uint8_t onehot4b_to_binary2b(uint8_t onehot4b);
 
 
+bool pressed_keys[NKEYS] = {[0 ... NKEYS-1] = false};
+
+
 // Poll the keyboard for pressed keys
 //
 // Returns true if a key was pressed, false otherwise. Also set the
@@ -106,22 +109,21 @@ bool ioboard_keypad_get_key(uint8_t *pressed) {
 //      down
 bool ioboard_keypad_rl_get_key(uint8_t *pressed, uint16_t rate) {
     int key;
-    bool any_pressed = ioboard_keypad_poll();
     bool pressed_and_not_limited = false;
     static uint16_t key_repeat[16] = {[0 ... 15] = 0};
 
-    if (any_pressed) {
-        for (key=0; key<NKEYS; key++) {
-            if (pressed_keys[key]) {
-                key_repeat[key] = (key_repeat[key] == 0) ? rate : key_repeat[key]-1;
-            } else {
-                key_repeat[i] = 0;
-            }
+    ioboard_keypad_poll();
 
-            if (key_repeat[key] == rate) {
-                *pressed = i;
-                pressed_and_not_limited = true;
-            }
+    for (key=0; key<NKEYS; key++) {
+        if (pressed_keys[key]) {
+            key_repeat[key] = (key_repeat[key] == 0) ? rate : key_repeat[key]-1;
+        } else {
+            key_repeat[key] = 0;
+        }
+
+        if (key_repeat[key] == rate) {
+            *pressed = key;
+            pressed_and_not_limited = true;
         }
     }
 

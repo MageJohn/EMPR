@@ -51,7 +51,7 @@ int main(void){
     write_usb_serial_blocking("start\n\r", 7);
 
     while (1) {
-        key_pressed = ioboard_keypad_rl_get_key(&scancode);
+        key_pressed = ioboard_keypad_rl_get_key(&scancode, 0xff);
         if (key_pressed) {
             lcd_bytes[1] = scancode_lcd_lut[scancode];
             ioboard_lcd_send_bytes(lcd_bytes, 2);
@@ -150,24 +150,25 @@ int main(void){
     return 0;
 }
 
-void fail(void) {
-    bool key_pressed;
+void clear_after_key() {
     uint8_t scancode;
-
-    ioboard_lcd_write_ascii("error", 0x00);
-    ioboard_lcd_write_ascii("press any key", 0x40);
     while (1) {
-        key_pressed = ioboard_keypad_get_key(&scancode);
-        if (key_pressed) {
+        if (ioboard_keypad_rl_get_key(&scancode, 255)) {
             ioboard_lcd_clear_display();
             return;
         }
     }
 }
 
+void fail(void) {
+    ioboard_lcd_write_ascii("error", 0x00);
+    ioboard_lcd_write_ascii("press any key", 0x40);
+
+    clear_after_key();
+    return;
+}
+
 void success(int8_t left_sign, uint8_t left, int8_t right_sign, int8_t right, uint8_t op) {
-    bool key_pressed;
-    uint8_t scancode;
     char str_result[5];
     int8_t result;
 
@@ -192,11 +193,6 @@ void success(int8_t left_sign, uint8_t left, int8_t right_sign, int8_t right, ui
     snprintf(str_result, 5, "%d", result);
     ioboard_lcd_write_ascii(str_result, 0x40);
 
-    while (1) {
-        key_pressed = ioboard_keypad_get_key(&scancode);
-        if (key_pressed) {
-            ioboard_lcd_clear_display();
-            return;
-        }
-    }
+    clear_after_key();
+    return;
 }

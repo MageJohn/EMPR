@@ -7,12 +7,6 @@
 #define KEYPAD_ADDR 0x21
 #define NKEYS 16
 
-/*------------------------------
- * VARIABLES
- *------------------------------*/
-
-bool pressed_keys[NKEYS] = {[0 ... NKEYS-1] = false};
-
 
 /*------------------------------
  * FUNCTIONS

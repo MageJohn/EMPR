@@ -6,6 +6,7 @@
 #include "ioboard_i2c.h"
 #include "ioboard_lcd.h"
 #include "ioboard_keypad.h"
+#include "serial.h"
 
 uint8_t scancode_lut[16] = {
     0xc4, 0xc3, 0xc2, 0xc1,
@@ -25,11 +26,14 @@ int main(void){
     ioboard_lcd_clear_display();
     ioboard_lcd_send_bytes(lcd_bytes, 2);
 
+    serial_init();
+
     lcd_bytes[0] = Control_byte(0, 1);
 
     while (1) {
-        key_pressed = ioboard_keypad_rl_get_key(&scancode);
+        key_pressed = ioboard_keypad_rl_get_key(&scancode, 255);
         if (key_pressed) {
+            write_usb_serial_blocking("pressed\n\r", 9);
             lcd_bytes[1] = scancode_lut[scancode];
             ioboard_lcd_send_bytes(lcd_bytes, 2);
         }
