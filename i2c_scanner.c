@@ -2,14 +2,9 @@
 #include "serial.h"
 #include "lpc17xx_i2c.h"
 #include "ioboard_i2c.h"
+#include "i2c_scanner.h"
 
 #define ADDR_OUT_LEN 7
-
-#ifndef MP2
-int main(void) {
-    return i2c_scan();
-}
-#endif
 
 int i2c_scan(void) {
     I2C_M_SETUP_Type scanning_packet;

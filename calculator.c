@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#include "lpc17xx_i2c.h"
-
 #include "serial.h"
 #include "ioboard_i2c.h"
 #include "ioboard_lcd.h"
@@ -161,6 +159,7 @@ void clear_after_key() {
 }
 
 void fail(void) {
+    ioboard_lcd_clear_display();
     ioboard_lcd_write_ascii("error", 0x00);
     ioboard_lcd_write_ascii("press any key", 0x40);
 

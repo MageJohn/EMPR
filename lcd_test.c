@@ -1,5 +1,3 @@
-#include "lpc17xx_i2c.h"
-
 #include "utils.h"
 #include "serial.h"
 #include "ioboard_lcd.h"
