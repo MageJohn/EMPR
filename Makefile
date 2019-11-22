@@ -57,8 +57,9 @@ CALCULATOR_EXECNAME = calculator
 MP2_EXECNAME = mp2_demo
 ADC_TEST_EXECNAME = adc_test
 DAC_TEST_EXECNAME = dac_test
+SIGNAL_COPY_EXECNAME = signal_copy
 
-EXECNAME = $(DAC_TEST_EXECNAME)
+EXECNAME = $(SIGNAL_COPY_EXECNAME)
 
 # Source files provided by the user to build the project
 
@@ -71,6 +72,7 @@ CALCULATOR_OBJ = calculator.o ioboard_i2c.o serial.o ioboard_lcd.o ioboard_keypa
 MP2_OBJ = mp2_demo.o ioboard_lcd.o wait.o i2c_scanner.o serial.o ioboard_i2c.o ioboard_keypad.o
 ADC_TEST_OBJ = serial.o wait.o adc_test.o
 DAC_TEST_OBJ = wait.o dac_test.o
+SIGNAL_COPY_OBJ = signal_copy.o leds.o
 
 # Commands handled by this makefile
 all: 	mp1 leds i2c_scanner
@@ -119,6 +121,11 @@ dac_test: $(DAC_TEST_OBJ)
 	mkdir -p bin # prevent error "No such file or directory" during linking
 	$(CC) -o $(BINFOLDER)/$(DAC_TEST_EXECNAME) $(DAC_TEST_OBJ) $(LDFLAGS)
 	$(OBJCOPY) -I elf32-little -O binary $(BINFOLDER)/$(DAC_TEST_EXECNAME) $(BINFOLDER)/$(DAC_TEST_EXECNAME).bin
+
+signal_copy: $(SIGNAL_COPY_OBJ)
+	mkdir -p bin # prevent error "No such file or directory" during linking
+	$(CC) -o $(BINFOLDER)/$(SIGNAL_COPY_EXECNAME) $(SIGNAL_COPY_OBJ) $(LDFLAGS)
+	$(OBJCOPY) -I elf32-little -O binary $(BINFOLDER)/$(SIGNAL_COPY_EXECNAME) $(BINFOLDER)/$(SIGNAL_COPY_EXECNAME).bin
 
 # make clean - Clean out the source tree ready to re-build the project
 clean:

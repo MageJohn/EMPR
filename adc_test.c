@@ -6,7 +6,7 @@
 #include "serial.h"
 #include "wait.h"
 
-#define ADC_RATE 200000
+#define ADC_RATE 100
 
 // Reads the value of ADC channel 0 (mbed p15, chip pin p0.23) and writes it to the serial line
 
@@ -28,7 +28,7 @@ int main(void) {
 
     write_usb_serial_blocking("start\n\r", 7);
 
-    ADC_Init(LPC_ADC, 100);
+    ADC_Init(LPC_ADC, ADC_RATE);
     ADC_ChannelCmd(LPC_ADC, ADC_CHANNEL_0, ENABLE);
 
     ADC_BurstCmd(LPC_ADC, 1);
@@ -39,4 +39,6 @@ int main(void) {
         write_usb_serial_blocking(outstr, 13);
         wait_ms(10);
     }
+
+    return 0;
 }

@@ -32,4 +32,6 @@ int main(void) {
             wait_ms(1);
         }
     }
+
+    return 0;
 }
