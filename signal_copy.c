@@ -81,10 +81,8 @@ void selection_sort(uint32_t *arr, uint8_t n) {
           }
         }
 
-        if (i != min_idx) {
-            tmp = arr[i];
-            arr[i] = arr[min_idx];
-            arr[min_idx] = tmp;
-        }
+        tmp = arr[i];
+        arr[i] = arr[min_idx];
+        arr[min_idx] = tmp;
     } 
 } 
