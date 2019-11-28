@@ -18,7 +18,7 @@ int i2c_scan(void) {
 
     ioboard_i2c_init();
 
-    write_usb_serial_blocking("Starting Scan", 15);
+    serial_write_b("Starting Scan", 15);
 
     n_devices = 0;
     data = 1;
@@ -32,7 +32,7 @@ int i2c_scan(void) {
 
     for (i = 0; i < 128; i++) {
         if (i % 8 == 0) {
-            write_usb_serial_blocking("\n\r", 2);
+            serial_write_b("\n\r", 2);
         }
 
         scanning_packet.sl_addr7bit = i;
@@ -41,17 +41,17 @@ int i2c_scan(void) {
                 &scanning_packet,
                 I2C_TRANSFER_POLLING) == SUCCESS) {
             snprintf(formatted_address, ADDR_OUT_LEN, " 0x%02x ", i);
-            write_usb_serial_blocking(formatted_address, ADDR_OUT_LEN - 1);
+            serial_write_b(formatted_address, ADDR_OUT_LEN - 1);
             n_devices++;
         } else {
-            write_usb_serial_blocking("  --  ", ADDR_OUT_LEN);
+            serial_write_b("  --  ", ADDR_OUT_LEN);
         }
     }
 
-    write_usb_serial_blocking("\n\r", 2);
+    serial_write_b("\n\r", 2);
 
     snprintf(output, 34, "%d devices connected to i2c bus\n\r", n_devices);
-    write_usb_serial_blocking(output, 33);
+    serial_write_b(output, 33);
 
     return 0;
 }

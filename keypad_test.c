@@ -33,7 +33,7 @@ int main(void){
     while (1) {
         key_pressed = ioboard_keypad_rl_get_key(&scancode, 255);
         if (key_pressed) {
-            write_usb_serial_blocking("pressed\n\r", 9);
+            serial_write_b("pressed\n\r", 9);
             lcd_bytes[1] = scancode_lut[scancode];
             ioboard_lcd_send_bytes(lcd_bytes, 2);
         }

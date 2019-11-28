@@ -46,7 +46,7 @@ int main(void){
 
     lcd_bytes[0] = Control_byte(0, 1);
 
-    write_usb_serial_blocking("start\n\r", 7);
+    serial_write_b("start\n\r", 7);
 
     while (1) {
         key_pressed = ioboard_keypad_rl_get_key(&scancode, 0xff);

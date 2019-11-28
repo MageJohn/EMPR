@@ -6,7 +6,7 @@
 
 int main(void) {
     serial_init();
-    write_usb_serial_blocking("start\n\r", 7);
+    serial_write_b("start\n\r", 7);
 
     ioboard_i2c_init();
 

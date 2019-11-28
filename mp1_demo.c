@@ -24,7 +24,7 @@ int main(void) {
     SYSTICK_IntCmd(ENABLE);
     SYSTICK_Cmd(ENABLE);
     
-    write_usb_serial_blocking("Starting count\n\r", 16);
+    serial_write_b("Starting count\n\r", 16);
     
     return 0;
 }
@@ -49,13 +49,13 @@ void SysTick_Handler(void) {
         sprintf(count_string, "%02u 0x%x 0b%04d\n\r", printable_count, 
                                                printable_count,
                                                binary_count);
-        write_usb_serial_blocking(count_string, COUNT_STRING_LEN);
+        serial_write_b(count_string, COUNT_STRING_LEN);
 
         if (count == 15) {
             led_clear();
             SYSTICK_IntCmd(DISABLE);
             SYSTICK_Cmd(DISABLE);
-            write_usb_serial_blocking("Finished count\n\r", 16);
+            serial_write_b("Finished count\n\r", 16);
         }
 
         count = (count + 1) % 16;

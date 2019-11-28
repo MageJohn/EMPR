@@ -61,7 +61,7 @@ void ADC_IRQHandler(void) {
     memcpy((void*)sorted_data, (void*)data, MEDIAN_WINDOW*sizeof(uint32_t));
 
     // sort the data points to find the median
-    selection_sort(sorted_data, MEDIAN_WINDOW);
+    insertion_sort(sorted_data, MEDIAN_WINDOW);
 
     DAC_UpdateValue(LPC_DAC, sorted_data[MEDIAN_WINDOW/2]);
 }
@@ -86,3 +86,19 @@ void selection_sort(uint32_t *arr, uint8_t n) {
         arr[min_idx] = tmp;
     } 
 } 
+
+void insertion_sort(uint32_t *arr, uint8_t n) {
+    uint8_t next, cur;
+    uint32_t tmp;
+
+    for (next=1; next<n; next++) {
+        cur = next;
+        while ((cur > 0) && (arr[cur] < arr[cur-1])) {
+            tmp = arr[cur];
+            arr[cur] = arr[cur-1];
+            arr[cur-1] = tmp;
+
+            cur--;
+        }
+    }
+}

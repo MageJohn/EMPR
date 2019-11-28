@@ -26,7 +26,7 @@ int main(void) {
 
     serial_init();
 
-    write_usb_serial_blocking("start\n\r", 7);
+    serial_write_b("start\n\r", 7);
 
     ADC_Init(LPC_ADC, ADC_RATE);
     ADC_ChannelCmd(LPC_ADC, ADC_CHANNEL_0, ENABLE);
@@ -36,7 +36,7 @@ int main(void) {
     while(1) {
         data = ADC_ChannelGetData(LPC_ADC, ADC_CHANNEL_0);
         snprintf(outstr, 13, "%010lu\n\r", data);
-        write_usb_serial_blocking(outstr, 13);
+        serial_write_b(outstr, 13);
         wait_ms(10);
     }
 
