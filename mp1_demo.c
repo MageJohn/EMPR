@@ -46,7 +46,7 @@ void SysTick_Handler(void) {
     
         printable_count = (unsigned int)count;
         binary_count = itob((long int)count, 4);
-        sprintf(count_string, "%02u 0x%x 0b%04d\n\r", printable_count, 
+        sprintf(count_string, "%02u 0x%x 0b%04ld\n\r", printable_count, 
                                                printable_count,
                                                binary_count);
         serial_write_b(count_string, COUNT_STRING_LEN);

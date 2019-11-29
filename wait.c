@@ -1,14 +1,20 @@
-#include "lpc17xx_rit.h"
-#include "lpc_types.h"
+#include "mbed_rit.h"
+#include "wait.h"
 
-void wait_ms(int time) {
-    RIT_Init(LPC_RIT);
+void wait(uint32_t time) {
+    wait_ms(time * 1000);
+}
 
-    RIT_TimerConfig(LPC_RIT, time);
+void wait_ms(uint32_t time) {
+    wait_us(time * 1000);
+}
 
-    RIT_Cmd(LPC_RIT, ENABLE);
+void wait_us(uint32_t time) {
+    mbed_rit_init();
+    mbed_rit_set(time);
+    mbed_rit_state(ENABLE);
 
-    while (RIT_GetIntStatus(LPC_RIT) != SET) {
+    while (!mbed_rit_get_int_status()) {
         continue;
     }
 }

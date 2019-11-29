@@ -10,7 +10,7 @@
 #define ADC_RATE (SIGNAL_RATE*100)
 #define MEDIAN_WINDOW 7
 
-void selection_sort(uint32_t *arr, uint8_t n);
+void insertion_sort(uint32_t *arr, size_t n);
 void ADC_IRQHandler(void);
 
 int main(void) {
@@ -66,29 +66,8 @@ void ADC_IRQHandler(void) {
     DAC_UpdateValue(LPC_DAC, sorted_data[MEDIAN_WINDOW/2]);
 }
 
-// based on code from https://www.geeksforgeeks.org/selection-sort/
-void selection_sort(uint32_t *arr, uint8_t n) {
-    uint8_t i, j, min_idx;
-    uint32_t tmp;
-  
-    for (i = 0; i <= n-1; i++) { 
-
-        min_idx = i; 
-
-        for (j = i+1; j <= n; j++) {
-          if (arr[j] < arr[min_idx]) {
-            min_idx = j; 
-          }
-        }
-
-        tmp = arr[i];
-        arr[i] = arr[min_idx];
-        arr[min_idx] = tmp;
-    } 
-} 
-
-void insertion_sort(uint32_t *arr, uint8_t n) {
-    uint8_t next, cur;
+void insertion_sort(uint32_t *arr, size_t n) {
+    size_t next, cur;
     uint32_t tmp;
 
     for (next=1; next<n; next++) {
