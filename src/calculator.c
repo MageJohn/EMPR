@@ -2,9 +2,9 @@
 #include <stdbool.h>
 
 #include "serial.h"
-#include "ioboard_i2c.h"
-#include "ioboard_lcd.h"
-#include "ioboard_keypad.h"
+#include "ioboard/i2c.h"
+#include "ioboard/lcd.h"
+#include "ioboard/keypad.h"
 
 #define case_any_digit case 0: case 1: case 2: case 3: case 4: case 5: case 6 :case 7: case 8: case 9:
 #define case_any_op case 0x0a: case 0x0c: case 0x0d: case 0x0e:

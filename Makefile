@@ -36,111 +36,57 @@ LDSCRIPT = $(CMSIS)/lib/ldscript_rom_gnu.ld
 CFLAGS=-mcpu=cortex-m3  -mthumb  -Wall  -O0  -mapcs-frame  -D__thumb2__=1 \
   -msoft-float  -gdwarf-2  -mno-sched-prolog  -fno-hosted  -mtune=cortex-m3 \
   -march=armv7-m  -mfix-cortex-m3-ldrd   -ffunction-sections  -fdata-sections \
-          -D__RAM_MODE__=0 $(CMSISINCLUDES) -I. 
+          -D__RAM_MODE__=0 $(CMSISINCLUDES) -I. -I./lib
 
 LDFLAGS=$(CMSISFL) -static -mcpu=cortex-m3 -mthumb -mthumb-interwork \
 	   -Wl,--start-group -L$(THUMB2GNULIB) -L$(THUMB2GNULIB2) \
            -lc -lg -lstdc++ -lsupc++  -lgcc -lm  -Wl,--end-group \
-	   -Xlinker -Map -Xlinker bin/lpc1700.map -Xlinker -T $(LDSCRIPT)
+	   -Xlinker -Map -Xlinker bin/lpc1700.map -Xlinker -T $(LDSCRIPT) -L
 
 LDFLAGS+=-L$(CMSIS)/lib -lDriversLPC17xxgnu
 
-BINFOLDER=bin
+CFLAGS += -MMD
 
-# Name of the binary being built
-MP1_EXECNAME = mp1_demo
-LEDS_EXECNAME = leds_demo
-I2C_SCAN_EXECNAME = i2c_scanner
-LCD_TEST_EXECNAME = lcd_test
-KP_TEST_EXECNAME = keypad_test
-CALCULATOR_EXECNAME = calculator
-MP2_EXECNAME = mp2_demo
-ADC_TEST_EXECNAME = adc_test
-DAC_TEST_EXECNAME = dac_test
-SIGNAL_COPY_EXECNAME = signal_copy
-TEST_WAIT_EXECNAME = test_wait
+.PHONY: clean install default
 
-EXECNAME = $(SIGNAL_COPY_EXECNAME)
-
-# Source files provided by the user to build the project
-
-MP1_OBJ = mp1_demo.o leds.o serial.o
-LEDS_OBJ = leds_demo.o leds.o
-I2C_SCAN_OBJ = i2c_scanner.o serial.o ioboard_i2c.o
-LCD_TEST_OBJ = lcd_test.o ioboard_i2c.o serial.o ioboard_lcd.o
-KP_TEST_OBJ = keypad_test.o ioboard_i2c.o ioboard_lcd.o ioboard_keypad.o serial.o
-CALCULATOR_OBJ = calculator.o ioboard_i2c.o serial.o ioboard_lcd.o ioboard_keypad.o 
-MP2_OBJ = mp2_demo.o ioboard_lcd.o wait.o i2c_scanner.o serial.o ioboard_i2c.o ioboard_keypad.o
-ADC_TEST_OBJ = serial.o wait.o adc_test.o
-DAC_TEST_OBJ = dac_test.o mbed_rit.o wait.o mbed_dac.o 
-SIGNAL_COPY_OBJ = signal_copy.o leds.o
-TEST_WAIT_OBJ = test_wait.o leds.o wait.o mbed_rit.o
+ROOT_DIR := $(shell pwd)
+BIN_DIR := $(ROOT_DIR)/bin
+SRC_DIR := $(ROOT_DIR)/src
+LIB_DIR := $(ROOT_DIR)/lib
 
 # Commands handled by this makefile
-all: 	mp1 leds i2c_scanner
-	@echo "Build finished"
+default:
+	@echo "No default. Call make with a program name to be installed"
 
-custom: $(OBJ)
-	mkdir -p bin # prevent error "No such file or directory" during linking
-	$(CC) -o $(BINFOLDER)/$(EXECNAME) $(OBJ) $(LDFLAGS)
-	$(OBJCOPY) -I elf32-little -O binary $(BINFOLDER)/$(EXECNAME) $(BINFOLDER)/$(EXECNAME).bin
+mp1_demo: leds.o serial.o
+	$(MAKE) $@.bin deps="$^"
 
-leds: $(LEDS_OBJ)
-	mkdir -p bin # prevent error "No such file or directory" during linking
-	$(CC) -o $(BINFOLDER)/$(LEDS_EXECNAME) $(LEDS_OBJ) $(LDFLAGS)
-	$(OBJCOPY) -I elf32-little -O binary $(BINFOLDER)/$(LEDS_EXECNAME) $(BINFOLDER)/$(LEDS_EXECNAME).bin
-	
-i2c_scanner: $(I2C_SCAN_OBJ)
-	mkdir -p bin # prevent error "No such file or directory" during linking
-	$(CC) -o $(BINFOLDER)/$(I2C_SCAN_EXECNAME) $(I2C_SCAN_OBJ) $(LDFLAGS)
-	$(OBJCOPY) -I elf32-little -O binary $(BINFOLDER)/$(I2C_SCAN_EXECNAME) $(BINFOLDER)/$(I2C_SCAN_EXECNAME).bin
+adc_test: serial.o wait.o
+	$(MAKE) $@.bin deps="$^"
 
-lcd_test: $(LCD_TEST_OBJ)
-	mkdir -p bin # prevent error "No such file or directory" during linking
-	$(CC) -o $(BINFOLDER)/$(LCD_TEST_EXECNAME) $(LCD_TEST_OBJ) $(LDFLAGS)
-	$(OBJCOPY) -I elf32-little -O binary $(BINFOLDER)/$(LCD_TEST_EXECNAME) $(BINFOLDER)/$(LCD_TEST_EXECNAME).bin
+calculator: serial.o ioboard.a
+	$(MAKE) $@.bin deps="$^"
 
-keypad_test: $(KP_TEST_OBJ)
-	mkdir -p bin # prevent error "No such file or directory" during linking
-	$(CC) -o $(BINFOLDER)/$(KP_TEST_EXECNAME) $(KP_TEST_OBJ) $(LDFLAGS)
-	$(OBJCOPY) -I elf32-little -O binary $(BINFOLDER)/$(KP_TEST_EXECNAME) $(BINFOLDER)/$(KP_TEST_EXECNAME).bin
+%.install:
+	$(MAKE) install name=$@
 
-calculator: $(CALCULATOR_OBJ)
-	mkdir -p bin # prevent error "No such file or directory" during linking
-	$(CC) -o $(BINFOLDER)/$(CALCULATOR_EXECNAME) $(CALCULATOR_OBJ) $(LDFLAGS)
-	$(OBJCOPY) -I elf32-little -O binary $(BINFOLDER)/$(CALCULATOR_EXECNAME) $(BINFOLDER)/$(CALCULATOR_EXECNAME).bin
-mp2_demo: $(MP2_OBJ)
-	mkdir -p bin # prevent error "No such file or directory" during linking
-	$(CC) -o $(BINFOLDER)/$(MP2_EXECNAME) $(MP2_OBJ) $(LDFLAGS)
-	$(OBJCOPY) -I elf32-little -O binary $(BINFOLDER)/$(MP2_EXECNAME) $(BINFOLDER)/$(MP2_EXECNAME).bin
+%.o: $(SRC_DIR)/%.c
+	$(CC) -c $(CFLAGS) $< -o $(BIN_DIR)/$@
 
-adc_test: $(ADC_TEST_OBJ)
-	mkdir -p bin # prevent error "No such file or directory" during linking
-	$(CC) -o $(BINFOLDER)/$(ADC_TEST_EXECNAME) $(ADC_TEST_OBJ) $(LDFLAGS)
-	$(OBJCOPY) -I elf32-little -O binary $(BINFOLDER)/$(ADC_TEST_EXECNAME) $(BINFOLDER)/$(ADC_TEST_EXECNAME).bin
+static/%.o: $(LIB_DIR)/%.c
+	$(CC) -c $(CFLAGS) $< -o $(BIN_DIR)/$@
 
-dac_test: $(DAC_TEST_OBJ)
-	mkdir -p bin # prevent error "No such file or directory" during linking
-	$(CC) -o $(BINFOLDER)/$(DAC_TEST_EXECNAME) $(DAC_TEST_OBJ) $(LDFLAGS)
-	$(OBJCOPY) -I elf32-little -O binary $(BINFOLDER)/$(DAC_TEST_EXECNAME) $(BINFOLDER)/$(DAC_TEST_EXECNAME).bin
-
-signal_copy: $(SIGNAL_COPY_OBJ)
-	mkdir -p bin # prevent error "No such file or directory" during linking
-	$(CC) -o $(BINFOLDER)/$(SIGNAL_COPY_EXECNAME) $(SIGNAL_COPY_OBJ) $(LDFLAGS)
-	$(OBJCOPY) -I elf32-little -O binary $(BINFOLDER)/$(SIGNAL_COPY_EXECNAME) $(BINFOLDER)/$(SIGNAL_COPY_EXECNAME).bin
-
-test_wait: $(TEST_WAIT_OBJ)
-	mkdir -p bin # prevent error "No such file or directory" during linking
-	$(CC) -o $(BINFOLDER)/$(TEST_WAIT_EXECNAME) $(TEST_WAIT_OBJ) $(LDFLAGS)
-	$(OBJCOPY) -I elf32-little -O binary $(BINFOLDER)/$(TEST_WAIT_EXECNAME) $(BINFOLDER)/$(TEST_WAIT_EXECNAME).bin
+%.bin: %.o
+	$(CC) -o $(BIN_DIR)/$* $(BIN_DIR)/$^ $(LDFLAGS)
+	$(OBJCOPY) -I elf32-little -O binary $(BIN_DIR)/$* $(BIN_DIR)/$@
+	rm $(BIN_DIR)/$*
 
 # make clean - Clean out the source tree ready to re-build the project
 clean:
 	rm -f `find . | grep \~`
 	rm -f *.swp *.o */*.o */*/*.o  *.log
 	rm -f *.d */*.d *.srec */*.a bin/*.map
-	rm -f *.elf *.wrn bin/*.bin log *.hex
-	rm -f $(EXECNAME)
+	rm -f *.elf *.wrn bin/* log *.hex
 
 # make install - Installs the resulting binary file to the MBED board, remember
 # to sync the file systems, so the copy finishes
@@ -148,7 +94,15 @@ clean:
 USER:=$(shell whoami)
 
 install:
-	@echo "Copying " $(BINFOLDER)/$(EXECNAME) "to the MBED file system"
-	cp $(BINFOLDER)/$(EXECNAME).bin /media/$(USER)/MBED &
+	@echo "Copying " $(BIN_DIR)/$(name) "to the MBED file system"
+	cp $(BIN_DIR)/$(name).bin /media/$(USER)/MBED &
 	sync
 	@echo "Now press the reset button on all MBED file systems"
+
+-include $(SRC_FILES:.h=.d)
+-include $(LIB_FILES:.h=.d)
+-include $($(wildcard $(LIB_DIR)/*/*.h):.h=.d)
+
+.SECONDEXPANSION:
+%.a: $$(patsubst $(LIB_DIR)/\%.c,$(BIN_DIR)/static/\%.o,$$(wildcard $(LIB_DIR)/%/*.c))
+	ar rcs $(BIN_DIR)/static/$@ $^
