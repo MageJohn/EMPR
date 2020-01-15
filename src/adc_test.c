@@ -4,7 +4,7 @@
 #include "lpc17xx_pinsel.h"
 
 #include "serial.h"
-#include "wait.h"
+#include "mbed/wait.h"
 
 #define ADC_RATE 100
 

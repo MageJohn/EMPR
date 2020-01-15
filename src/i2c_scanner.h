@@ -1,1 +1,1 @@
-int i2c_scan(void);
+int main(void);

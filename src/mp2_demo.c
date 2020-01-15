@@ -1,8 +1,12 @@
-#include "ioboard_lcd.h"
-#include "ioboard_i2c.h"
-#include "ioboard_keypad.h"
-#include "i2c_scanner.h"
-#include "wait.h"
+#include "ioboard/lcd.h"
+#include "ioboard/i2c.h"
+#include "ioboard/keypad.h"
+#include "mbed/wait.h"
+
+// Hacky, but it works, so what the hell
+#define main i2c_scan
+#include "i2c_scanner.c"
+#undef main
 
 void keypad_test(void);
 

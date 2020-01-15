@@ -1,7 +1,7 @@
 #include "lpc17xx_pwm.h"
 #include "lpc17xx_pinsel.h"
 #include "leds.h"
-#include "wait.h"
+#include "mbed/wait.h"
 
 int main(void) {
     uint8_t i;
@@ -14,7 +14,7 @@ int main(void) {
         .Funcnum = 1,
         .OpenDrain = PINSEL_PINMODE_NORMAL,
         .Pinmode = PINSEL_PINMODE_PULLUP,
-        .Pinnum = 0,
+        .Pinnum = 1,
         .Portnum = 2
     };
     

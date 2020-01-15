@@ -2,7 +2,7 @@
 
 #include "lpc17xx_i2c.h"
 
-#include "ioboard_keypad.h"
+#include "ioboard/keypad.h"
 
 // All functions assume that the IO board's I2C interface has been initialised
 // with the function ioboard_i2c_init()

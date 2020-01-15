@@ -1,12 +1,11 @@
 #include <stdio.h>
 #include "serial.h"
 #include "lpc17xx_i2c.h"
-#include "ioboard_i2c.h"
-#include "i2c_scanner.h"
+#include "ioboard/i2c.h"
 
 #define ADDR_OUT_LEN 7
 
-int i2c_scan(void) {
+int main(void) {
     I2C_M_SETUP_Type scanning_packet;
     char output[34];
     uint8_t data;

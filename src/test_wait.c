@@ -1,4 +1,4 @@
-#include "wait.h"
+#include "mbed/wait.h"
 #include "leds.h"
 
 int main(void) {

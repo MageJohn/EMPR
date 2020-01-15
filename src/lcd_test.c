@@ -1,7 +1,7 @@
 #include "utils.h"
 #include "serial.h"
-#include "ioboard_lcd.h"
-#include "ioboard_i2c.h"
+#include "ioboard/lcd.h"
+#include "ioboard/i2c.h"
 
 
 int main(void) {

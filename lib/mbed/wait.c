@@ -1,4 +1,4 @@
-#include "mbed_rit.h"
+#include "rit.h"
 #include "wait.h"
 
 void wait(uint32_t time) {

@@ -3,8 +3,8 @@
 #include "lpc17xx_pinsel.h"
 #include "lpc17xx_dac.h"
 
-#include "wait.h"
-#include "mbed_dac.h"
+#include "mbed/wait.h"
+#include "mbed/dac.h"
 
 int main(void) {
     uint32_t ampl=MBED_DAC_WAVEFORM_AMPL_MAX/8, freq=MBED_DAC_FREQ_MAX/8;

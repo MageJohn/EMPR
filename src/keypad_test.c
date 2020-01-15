@@ -3,9 +3,9 @@
 
 #include "lpc17xx_i2c.h"
 
-#include "ioboard_i2c.h"
-#include "ioboard_lcd.h"
-#include "ioboard_keypad.h"
+#include "ioboard/i2c.h"
+#include "ioboard/lcd.h"
+#include "ioboard/keypad.h"
 #include "serial.h"
 
 uint8_t scancode_lut[16] = {
